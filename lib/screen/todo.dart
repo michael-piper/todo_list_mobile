@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_list/services/box.dart' show todoListBox;
+import 'package:todo_list/services/my_button.dart';
 import 'package:todo_list/utils/colors.dart';
 import 'package:todo_list/utils/helper.dart';
 import '../services/types.dart';
@@ -50,6 +51,12 @@ class _TodoPageState extends State<TodoPage> {
     todoListBox.putAt(widget.id, todo);
 
     _editing(false);
+  }
+
+  _activeToggle(Todo todo) {
+    todo.active = !todo.active;
+    todo.updatedAt = DateTime.now();
+    todoListBox.putAt(widget.id, todo);
   }
 
   @override
@@ -160,6 +167,21 @@ class _TodoPageState extends State<TodoPage> {
                                 contentPadding: EdgeInsets.zero,
                                 title: Text("Title"),
                                 subtitle: Text(todo.title),
+                                trailing: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("Status"),
+                                    Text(
+                                      todo.active ? "Active" : "Completed",
+                                      style: TextStyle(
+                                        color: todo.active
+                                            ? Colors.red
+                                            : Colors.green,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                               ListTile(
                                 contentPadding: EdgeInsets.zero,
@@ -201,6 +223,13 @@ class _TodoPageState extends State<TodoPage> {
                                   Text(
                                       "${todo.endTime == null ? "" : todo.endTime}")
                                 ],
+                              ),
+                              SMALL_DIVIDER,
+                              MyButton(
+                                todo.active ? "Active" : "Completed",
+                                onPressed: () => _activeToggle(todo),
+                                type: 2,
+                                color: todo.active ? Colors.red : Colors.green,
                               ),
                               SMALL_DIVIDER,
                             ],
